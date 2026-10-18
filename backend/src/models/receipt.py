@@ -8,8 +8,10 @@ from src.core.database import Base
 class ReceiptStatus(str, enum.Enum):
     PENDING_AI = "PENDING_AI"
     AUTO_RECONCILED = "AUTO_RECONCILED"
-    RED_ALERT = "RED_ALERT"
-    MANUALLY_RECONCILED = "MANUALLY_RECONCILED"
+    CLIENT_CONFIRMATION_REQUIRED = "CLIENT_CONFIRMATION_REQUIRED"
+    CLIENT_CONFIRMED = "CLIENT_CONFIRMED"
+    RED_ALERT = "CLIENT_CONFIRMATION_REQUIRED"  # Mantido como alias de auto-resolução
+    MANUALLY_RECONCILED = "CLIENT_CONFIRMED"    # Confirmação direta do cliente em 1 clique
     DISCARDED = "DISCARDED"
 
 

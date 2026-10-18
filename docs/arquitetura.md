@@ -34,34 +34,24 @@ flowchart TD
 
 ---
 
-## 3. Fluxo de Alertas Vermelhos (Intervenção Humana)
+## 3. Fluxo de Auto-Resolução & Confirmação Direta do Cliente
 
-O objetivo é poupar tempo: o gestor **só abre o painel para agir sobre o que a IA não teve certeza absoluta**.
+No modelo **Micro-OaaS 100% Autônomo**, **não existe fila de suporte humano interno nem operadores manuais**. O fundador/administrador foca exclusivamente em vendas e marketing.
+
+Quando a IA detecta alguma discrepância (ex.: variação de tarifa bancária ou imagem cortada), ela auto-formula a sugestão e envia uma notificação inteligente para que o **próprio cliente confirme em 1 clique na tela dele**, preservando o sigilo total dos dados.
 
 ```mermaid
 flowchart LR
-    A["Comprovante com Erro / Incerteza"] --> B["Geração de Alerta Vermelho"]
-    B --> C["Notificação no Painel e Badge 🔴"]
-    C --> D["Tela de Resolução Lado a Lado"]
-    D --> E["Ação do Usuário: Confirmar / Corrigir / Descartar"]
-    E --> F["Reclassificação e Fechamento do Caixa"]
+    A["Comprovante com Variação / Taxa"] --> B["Diagnóstico de Auto-Resolução pela IA"]
+    B --> C["Notificação Inteligente no Painel do Cliente 🔔"]
+    C --> D["Confirmação Direta do Próprio Cliente em 1 Clique"]
+    D --> E["Caixa Atualizado e Conciliado Instantaneamente ✅"]
 ```
 
-### Gatilhos que acionam o Alerta Vermelho:
-* **Divergência de Valor:** O comprovante indica R$ 150,00, mas no extrato bancário debitou R$ 158,50 (ex.: juros/tarifas não identificadas).
-* **Documento Ilegível ou Cortado:** Score de confiança da IA abaixo de **0.90**.
-* **Sem Match no Extrato:** Passaram-se mais de 3 dias úteis do pagamento informado e nenhuma movimentação correspondente apareceu na conta bancária.
-* **Duplicidade em Potencial:** Dois comprovantes idênticos enviados na mesma data.
-
-### Experiência de Resolução no Frontend:
-1. **Destaque Visual Imediato:** Card em tom vermelho com indicador claro do motivo da pendência (ex.: *"Valor não bate com extrato por R$ 8,50"*).
-2. **Visualização Dividida (Side-by-Side):**
-   * **Esquerda:** Foto original do comprovante com zoom.
-   * **Direita:** Sugestão da IA e lançamentos do extrato disponíveis para vínculo.
-3. **Resolução em 1 Clique:**
-   * `[Vincular ao Extrato Sugerido]`
-   * `[Corrigir Valor/Data Manualmente]`
-   * `[Ignorar / Descartar Comprovante]`
+### Gatilhos e Auto-Resolução:
+* **Variação de Valor / Tarifa:** A IA detecta a diferença (ex.: taxa de boleto de R$ 6,50) e sugere a compensação automática para o cliente validar com 1 toque.
+* **Documento Cortado:** A IA solicita ao cliente o reenvio ou confirmação direta dos dígitos faltantes.
+* **Sem Intermediação:** Zero filas de tickets de suporte, zero operadores humanos visualizando extratos e documentos.
 
 ---
 

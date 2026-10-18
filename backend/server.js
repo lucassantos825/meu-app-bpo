@@ -154,7 +154,7 @@ function reconcileWithBankStatement(db, extractedData, receiptId) {
     };
   }
 
-  // 2. Procura Transação Próxima com Divergência de Valor (Alerta Vermelho)
+  // 2. Procura Transação Próxima com Divergência de Valor (Auto-Resolução com Confirmação do Cliente)
   const divergentTx = transactions.find(
     (tx) => !tx.isReconciled && Math.abs(Math.abs(tx.amount) - extractedData.amount) <= 25.00
   );
@@ -162,46 +162,54 @@ function reconcileWithBankStatement(db, extractedData, receiptId) {
   if (divergentTx) {
     const bankAmount = Math.abs(divergentTx.amount);
     const diff = Math.abs(bankAmount - extractedData.amount);
-    const description = `Divergência de Valor: Comprovante indica R$ ${extractedData.amount.toFixed(2)}, mas débito no ${divergentTx.bankName} foi de R$ ${bankAmount.toFixed(2)} (Diferença de R$ ${diff.toFixed(2)}).`;
+    const description = `Auto-Resolução IA: Comprovante indica R$ ${extractedData.amount.toFixed(2)}, débito no ${divergentTx.bankName} de R$ ${bankAmount.toFixed(2)} (Variação de R$ ${diff.toFixed(2)}). Ajuste preparado para confirmação em 1 clique.`;
 
     const alert = {
       id: `alert-${Date.now()}`,
       receiptId: receiptId,
-      issueType: "AMOUNT_MISMATCH",
-      title: `Divergência de R$ ${diff.toFixed(2)} com o Extrato`,
+      issueType: "CLIENT_CONFIRMATION_REQUIRED",
+      title: `Sugestão de Auto-Resolução: Ajuste de R$ ${diff.toFixed(2)}`,
       description: description,
+      actionPrompt: "Aprovar ajuste sugerido pela IA diretamente no painel (sem intermediários humanos).",
       amountReceipt: extractedData.amount,
       amountBank: bankAmount,
       difference: diff,
       detectedAt: new Date().toISOString(),
       confidenceScore: extractedData.confidence,
+      suggestedTransactionId: divergentTx.id,
+      autoResolutionReady: true,
+      requiresInternalSupport: false, // ZERO suporte humano interno
+      clientActionRequired: true,      // Confirmação direta do próprio cliente em 1 clique
     };
 
     return {
-      matchStatus: "RED_ALERT",
+      matchStatus: "CLIENT_CONFIRMATION_REQUIRED",
       matchedTransactionId: divergentTx.id,
       divergenceReason: description,
       redAlert: alert,
     };
   }
 
-  // 3. Sem correspondência no extrato bancário
-  const noMatchDesc = `Nenhum lançamento bancário de R$ ${extractedData.amount.toFixed(2)} localizado no extrato do dia.`;
+  // 3. Sem correspondência imediata no extrato bancário
+  const noMatchDesc = `Aguardando compensação: Nenhum débito bancário de R$ ${extractedData.amount.toFixed(2)} localizado no extrato de hoje. O robô continua monitorando 24/7.`;
   const alert = {
     id: `alert-${Date.now()}`,
     receiptId: receiptId,
-    issueType: "MISSING_BANK_ENTRY",
-    title: "Comprovante Sem Lançamento no Extrato",
+    issueType: "PENDING_BANK_CLEARING",
+    title: "Aguardando Compensação Bancária",
     description: noMatchDesc,
+    actionPrompt: "Confirmar se o pagamento foi realizado por outra conta bancária ou aguardar compensação.",
     amountReceipt: extractedData.amount,
     amountBank: null,
     difference: 0,
     detectedAt: new Date().toISOString(),
     confidenceScore: extractedData.confidence,
+    requiresInternalSupport: false,
+    clientActionRequired: true,
   };
 
   return {
-    matchStatus: "RED_ALERT",
+    matchStatus: "CLIENT_CONFIRMATION_REQUIRED",
     matchedTransactionId: null,
     divergenceReason: noMatchDesc,
     redAlert: alert,

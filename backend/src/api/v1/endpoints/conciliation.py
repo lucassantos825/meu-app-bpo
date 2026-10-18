@@ -29,6 +29,8 @@ class RedAlertItemResponse(BaseModel):
     divergenceReason: str
     confidence: float
     fileUrl: Optional[str] = None
+    actionPrompt: Optional[str] = "Confirmação do próprio cliente em 1 clique (sem suporte interno)."
+    autoResolutionReady: bool = True
 
 
 class ResolveAlertRequest(BaseModel):
@@ -73,7 +75,7 @@ def get_conciliation_summary(db: Session = Depends(get_db)):
         db.query(Receipt)
         .filter(
             Receipt.tenant_id == tenant.id,
-            Receipt.status == ReceiptStatus.RED_ALERT.value,
+            Receipt.status == ReceiptStatus.CLIENT_CONFIRMATION_REQUIRED.value,
         )
         .count()
     )
@@ -102,13 +104,13 @@ def get_conciliation_summary(db: Session = Depends(get_db)):
 
 @router.get("/alerts", response_model=List[RedAlertItemResponse])
 def get_red_alerts(db: Session = Depends(get_db)):
-    """Retorna a lista de transações com pendência para a esteira de exceções."""
+    """Retorna as notificações inteligentes de auto-resolução para confirmação direta do próprio cliente (sem fila de suporte interno)."""
     tenant = get_default_tenant(db)
     alerts = (
         db.query(Receipt)
         .filter(
             Receipt.tenant_id == tenant.id,
-            Receipt.status == ReceiptStatus.RED_ALERT.value,
+            Receipt.status == ReceiptStatus.CLIENT_CONFIRMATION_REQUIRED.value,
         )
         .order_by(Receipt.uploaded_at.desc())
         .all()
@@ -122,9 +124,11 @@ def get_red_alerts(db: Session = Depends(get_db)):
             recipient=r.extracted_recipient or "Favorecido Desconhecido",
             amount=r.extracted_amount or 0.0,
             date=r.extracted_date or "",
-            divergenceReason=r.divergence_reason or "Divergência requer conferência manual.",
+            divergenceReason=r.divergence_reason or "Sugestão de ajuste formulada pela IA aguardando confirmação em 1 clique.",
             confidence=r.ai_confidence_score or 0.0,
             fileUrl=r.file_url,
+            actionPrompt="Aprovar auto-resolução em 1 clique na sua tela.",
+            autoResolutionReady=True,
         )
         for r in alerts
     ]
@@ -132,7 +136,7 @@ def get_red_alerts(db: Session = Depends(get_db)):
 
 @router.post("/resolve")
 def resolve_red_alert(request: ResolveAlertRequest, db: Session = Depends(get_db)):
-    """Resolve uma divergência de conciliação humana em 1 clique."""
+    """Registra a confirmação em 1 clique realizada diretamente pelo próprio cliente na tela dele."""
     receipt = db.query(Receipt).filter(Receipt.id == request.receiptId).first()
     if not receipt:
         raise HTTPException(status_code=404, detail="Comprovante não encontrado")
@@ -143,14 +147,14 @@ def resolve_red_alert(request: ResolveAlertRequest, db: Session = Depends(get_db
             tx.is_reconciled = True
             tx.matched_receipt_id = receipt.id
             receipt.matched_transaction_id = tx.id
-            receipt.status = ReceiptStatus.MANUALLY_RECONCILED.value
+            receipt.status = ReceiptStatus.CLIENT_CONFIRMED.value
             receipt.divergence_reason = None
 
     elif request.action == "UPDATE_AMOUNT" and request.correctedAmount is not None:
         receipt.extracted_amount = request.correctedAmount
         if request.correctedCategory:
             receipt.category = request.correctedCategory
-        receipt.status = ReceiptStatus.MANUALLY_RECONCILED.value
+        receipt.status = ReceiptStatus.CLIENT_CONFIRMED.value
         receipt.divergence_reason = None
 
     elif request.action == "DISCARD":

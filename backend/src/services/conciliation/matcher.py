@@ -94,23 +94,25 @@ class ConciliationMatcherService:
         if divergent_tx:
             diff = abs(abs(divergent_tx.amount) - receipt.extracted_amount)
             reason = (
-                f"Divergência de valor: Comprovante indica R$ {receipt.extracted_amount:.2f}, "
-                f"mas débito bancário foi de R$ {abs(divergent_tx.amount):.2f} (Diferença de R$ {diff:.2f})."
+                f"Auto-Resolução Ativa: Comprovante de R$ {receipt.extracted_amount:.2f} cruza com lançamento "
+                f"de R$ {abs(divergent_tx.amount):.2f} (Variação de R$ {diff:.2f}). Ajuste formulado pela IA aguardando "
+                "confirmação em 1 clique na tela do cliente (sem intermediários humanos)."
             )
-            receipt.status = ReceiptStatus.RED_ALERT.value
+            receipt.status = ReceiptStatus.CLIENT_CONFIRMATION_REQUIRED.value
             receipt.divergence_reason = reason
             db.commit()
-            return ReceiptStatus.RED_ALERT, divergent_tx, reason
+            return ReceiptStatus.CLIENT_CONFIRMATION_REQUIRED, divergent_tx, reason
 
         # Sem correspondência no extrato bancário
         reason = (
-            f"Nenhuma transação correspondente de R$ {receipt.extracted_amount:.2f} "
-            f"encontrada no extrato entre {start_window.strftime('%d/%m')} e {end_window.strftime('%d/%m')}."
+            f"Aguardando compensação: Nenhuma movimentação de R$ {receipt.extracted_amount:.2f} "
+            f"identificada no extrato ({start_window.strftime('%d/%m')} a {end_window.strftime('%d/%m')}). "
+            "Robô monitorando 24/7. Notificação gerada no painel para confirmação direta do cliente."
         )
-        receipt.status = ReceiptStatus.RED_ALERT.value
+        receipt.status = ReceiptStatus.CLIENT_CONFIRMATION_REQUIRED.value
         receipt.divergence_reason = reason
         db.commit()
-        return ReceiptStatus.RED_ALERT, None, reason
+        return ReceiptStatus.CLIENT_CONFIRMATION_REQUIRED, None, reason
 
 
 conciliation_matcher_service = ConciliationMatcherService()
