@@ -31,38 +31,7 @@ export default function ComprovantesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"upload" | "camera">("upload");
 
-  const [receipts, setReceipts] = useState<UploadedReceiptHistory[]>([
-    {
-      id: "rec-1",
-      name: "Posto Shell - Auto Posto Ipiranga Ltda",
-      date: "18/10/2026",
-      amount: 184.5,
-      category: "Fornecedores / Mercadorias",
-      bankAccount: "Itaú Unibanco",
-      status: "CONCILIADO",
-      confidence: 0.98,
-    },
-    {
-      id: "rec-2",
-      name: "Kalunga Comércio e Indústria Gráfica",
-      date: "17/10/2026",
-      amount: 245.9,
-      category: "Material de Escritório",
-      bankAccount: "Nubank PJ",
-      status: "CONCILIADO",
-      confidence: 0.97,
-    },
-    {
-      id: "rec-3",
-      name: "Recibo de Manutenção de Ar Condicionado",
-      date: "16/10/2026",
-      amount: 320.0,
-      category: "Manutenção & Serviços",
-      bankAccount: "Itaú Unibanco",
-      status: "ALERTA",
-      confidence: 0.68,
-    },
-  ]);
+  const [receipts, setReceipts] = useState<UploadedReceiptHistory[]>([]);
 
   const handleOpenScanner = (mode: "upload" | "camera") => {
     setModalMode(mode);
@@ -184,7 +153,30 @@ export default function ComprovantesPage() {
           </div>
 
           <div className="divide-y divide-slate-100 overflow-x-auto">
-            {receipts.map((rec) => (
+            {receipts.length === 0 ? (
+              <div className="py-12 text-center space-y-3">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+                  <FileText className="h-6 w-6" />
+                </div>
+                <h4 className="text-sm font-bold text-slate-800">
+                  Nenhum comprovante enviado ainda
+                </h4>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                  Faça o upload do seu primeiro documento ou tire uma foto com a câmera do celular para a IA começar a operar.
+                </p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenScanner("upload")}
+                    className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-md hover:bg-blue-700 transition-all"
+                  >
+                    <UploadCloud className="h-4 w-4" />
+                    Enviar Primeiro Comprovante
+                  </button>
+                </div>
+              </div>
+            ) : (
+              receipts.map((rec) => (
               <div
                 key={rec.id}
                 className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/50 px-2 rounded-xl transition-colors"

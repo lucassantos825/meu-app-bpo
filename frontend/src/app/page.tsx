@@ -178,10 +178,12 @@ export default function SalesLandingPage() {
             </Link>
 
             <a
-              href="#precos"
+              href={KIWIFY_CHECKOUT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-extrabold text-white shadow-md shadow-blue-600/30 hover:from-blue-500 hover:to-indigo-500 active:scale-95 transition-all"
             >
-              <span>Assinar por R$ 29,90</span>
+              <span>Assinar Agora</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </a>
           </div>

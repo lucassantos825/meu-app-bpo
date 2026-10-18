@@ -25,12 +25,14 @@ export async function fetchSubscriptionStatus(): Promise<SubscriptionStatusRespo
     console.warn("Backend offline, utilizando status padrão de demonstração:", error);
   }
 
-  // Fallback padrão se o servidor estiver temporariamente desligado
+  // Fallback seguro com variáveis configuradas
   return {
-    tenantName: "Oficina Mecânica & Peças Silva Ltda",
-    plan: "Plano BPO Micro Pro",
+    tenantName: "Minha Empresa",
+    plan: "Plano Mensal OaaS",
     status: "ACTIVE",
     isActive: true,
-    kiwifyCheckoutUrl: "https://kiwify.app/checkout-placeholder-bpo",
+    kiwifyCheckoutUrl:
+      process.env.NEXT_PUBLIC_KIWIFY_CHECKOUT_URL ||
+      "https://kiwify.app/checkout-placeholder-bpo?plan=mensal-2990",
   };
 }

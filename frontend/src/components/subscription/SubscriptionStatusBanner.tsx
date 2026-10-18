@@ -17,11 +17,13 @@ interface SubscriptionStatusBannerProps {
 
 export default function SubscriptionStatusBanner({
   subscription = {
-    tenantName: "Oficina Mecânica & Peças Silva Ltda",
-    plan: "Plano BPO Micro Pro",
+    tenantName: "Minha Empresa",
+    plan: "Plano Mensal OaaS",
     status: "ACTIVE",
     isActive: true,
-    kiwifyCheckoutUrl: "https://kiwify.app/checkout-placeholder-bpo",
+    kiwifyCheckoutUrl:
+      process.env.NEXT_PUBLIC_KIWIFY_CHECKOUT_URL ||
+      "https://kiwify.app/checkout-placeholder-bpo?plan=mensal-2990",
   },
 }: SubscriptionStatusBannerProps) {
   const [sub, setSub] = useState<SubscriptionInfo>(subscription);
