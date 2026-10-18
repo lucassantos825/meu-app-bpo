@@ -1,0 +1,86 @@
+{
+  "tenants": [
+    {
+      "id": "tenant-001",
+      "name": "Oficina Mecânica & Peças Silva Ltda",
+      "cnpj": "12.345.678/0001-90",
+      "plan": "Plano BPO Micro Pro",
+      "status": "ACTIVE"
+    }
+  ],
+  "bankTransactions": [
+    {
+      "id": "tx-001",
+      "bankName": "Itaú Unibanco (Conta Principal)",
+      "date": "2026-10-18",
+      "description": "DEB AUTO POSTO IPIRANGA",
+      "amount": -184.50,
+      "type": "outflow",
+      "isReconciled": false,
+      "matchedReceiptId": null
+    },
+    {
+      "id": "tx-002",
+      "bankName": "Nubank PJ",
+      "date": "2026-10-18",
+      "description": "PIX ENVIADO KALUNGA GRAFICA",
+      "amount": -245.90,
+      "type": "outflow",
+      "isReconciled": false,
+      "matchedReceiptId": null
+    },
+    {
+      "id": "tx-003",
+      "bankName": "Itaú Unibanco (Conta Principal)",
+      "date": "2026-10-18",
+      "description": "DEB POSTO SHELL DIVERGENCIA",
+      "amount": -165.00,
+      "type": "outflow",
+      "isReconciled": false,
+      "matchedReceiptId": null
+    },
+    {
+      "id": "tx-004",
+      "bankName": "Itaú Unibanco (Conta Principal)",
+      "date": "2026-10-18",
+      "description": "PIX RECEBIDO CLIENTE CARLA MENDES",
+      "amount": 1500.00,
+      "type": "inflow",
+      "isReconciled": true,
+      "matchedReceiptId": null
+    }
+  ],
+  "receipts": [
+    {
+      "id": "rec-001",
+      "originalFileName": "comprovante_kalunga.pdf",
+      "filePath": "storage/uploads/comprovante_kalunga.pdf",
+      "fileUrl": "/static/uploads/comprovante_kalunga.pdf",
+      "amount": 245.90,
+      "date": "2026-10-18",
+      "recipient": "Kalunga Comércio e Indústria Gráfica",
+      "cnpjCpf": "43.283.811/0001-50",
+      "category": "Material de Escritório",
+      "bankAccount": "Nubank PJ",
+      "confidence": 0.97,
+      "status": "AUTO_MATCH",
+      "divergenceReason": null,
+      "matchedTransactionId": "tx-002",
+      "createdAt": "2026-10-18T09:00:00.000Z"
+    }
+  ],
+  "redAlerts": [
+    {
+      "id": "alert-001",
+      "receiptId": "rec-divergente-shell",
+      "issueType": "AMOUNT_MISMATCH",
+      "title": "Divergência de Valor no Posto Shell",
+      "description": "Comprovante extraído com R$ 158,50, mas débito bancário foi de R$ 165,00.",
+      "amountReceipt": 158.50,
+      "amountBank": 165.00,
+      "difference": 6.50,
+      "detectedAt": "2026-10-18T08:42:00.000Z",
+      "confidenceScore": 0.95
+    }
+  ]
+}

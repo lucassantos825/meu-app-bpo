@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+.venv/
+venv/
+env/
+
+# Production / Next.js builds
+.next/
+out/
+build/
+
+# Environment files
+.env
+.env*.local
+!.env.example
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Uploads & local data
+storage/uploads/*
+!storage/uploads/.gitkeep
+backend/data/*.sqlite
+backend/data/*.db
+
+# Editor / Agent dirs
+.claudecode/
+.vscode/
+.idea/
