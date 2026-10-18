@@ -216,7 +216,8 @@ export default function ComprovantesPage() {
                   )}
                 </div>
               </div>
-            ))}
+            ))
+          )}
           </div>
         </section>
       </main>
